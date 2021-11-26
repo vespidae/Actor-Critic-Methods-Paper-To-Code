@@ -161,14 +161,14 @@ class CriticNetwork(nn.Module):
         return state_action_value
     
     def save_checkpoint(self):
-        print("saving {} checkpoint...".format(chkpt_name))
-        torch.save(self.state_dict(), self.chkpt_file.format(chkpt_name))
-        print("{} checkpoint saved.")
+        print("saving {} checkpoint...".format(self.chkpt_name))
+        torch.save(self.state_dict(), self.chkpt_file)
+        print("{} checkpoint saved.".format(self.chkpt_name))
     
     def load_checkpoint(self):
-        print("loading {} checkpoint...".format(chkpt_name))
+        print("loading {} checkpoint...".format(self.chkpt_name))
         self.load_state_dict(torch.load(self.chkpt_file))
-        print("{} checkpoint loaded.".format(chkpt_name))
+        print("{} checkpoint loaded.".format(self.chkpt_name))
 
 
 # In[ ]:
@@ -247,14 +247,14 @@ class ActorNetwork(nn.Module):
         return A
     
     def save_checkpoint(self):
-        print("saving {} checkpoint...".format(chkpt_name))
+        print("saving {} checkpoint...".format(self.chkpt_name))
         torch.save(self.state_dict(), self.chkpt_file)
-        print("{} checkpoint saved.".format(chkpt_name))
+        print("{} checkpoint saved.".format(self.chkpt_name))
     
     def load_checkpoint(self):
-        print("loading {} checkpoint...".format(chkpt_name))
+        print("loading {} checkpoint...".format(self.chkpt_name))
         self.load_state_dict(torch.load(self.chkpt_file))
-        print("{} checkpoint loaded.".format(chkpt_name))
+        print("{} checkpoint loaded.".format(self.chkpt_name))
 
 
 # In[ ]:
@@ -411,12 +411,16 @@ hlOne = 400
 hlTwo = 300
 buffer_size = 2e4
 minibatch_size = 64
+# stuck_seconds = 5
 
 # instantiate environment and agent
-# env = gym.make('LunarLanderContinuous-v2')
+# env = gym.make('LunarLanderContinuous-v2') # <- good vizualizations
 # env = gym.make('ALE/ElevatorAction-v5')#, render_mode='human')
-env = gym.make('ALE/ChopperCommand-v5')
-# env = gym.make('ChopperCommand-v4')
+# env = gym.make('ALE/Adventure-v5')
+# env = gym.make('ALE/Asteroids-v5')
+# env = gym.make('ALE/ChopperCommand-v5') # <- good vizualizations
+# env = gym.make('ALE/Alien-v5') # <- good vizualizations
+env = gym.make('ALE/BattleZone-v5') # <- good vizualizations
 # print(env.observation_space.shape[0])
 action_space_is_box = type(env.action_space) is gym.spaces.box.Box
 number_of_actions = env.action_space.shape[0] if action_space_is_box else env.action_space.n
@@ -438,13 +442,28 @@ for i in range(n_games):
     score = 0
     done = False
     
+#     stuck_range = stuck_seconds * 60
+#     # sticky_situation = [null_obv for i in range(stuck_range)]
+#     sticky_situation = np.zeros(stuck_range).tolist()
+#     stick_cnt = 0
+#     stuck = True
+    
     while not done:
+        # # get unstuck if necessary
+        # sticky_situation[stick_cnt % stuck_range]
+        # stick_cnt += 1
+        # for frame in sticky_situation:
+        #     if null_obv is not frame: 
+        #         stuck = False
+        # if stuck: break
+        
         # get action
         choice = agent.choose_action(null_obv)
         # prime_obv, reward, done, info = env.step(action.argmax(0))
         action = choice if action_space_is_box else choice.argmax(0)
         prime_obv, reward, done, info = env.step(action)
         env.render()
+        # print(info)
         agent.remember(null_obv, action, reward, prime_obv, done)
         # update score
         score += reward
@@ -452,8 +471,9 @@ for i in range(n_games):
         agent.learn()
         
         # prep for next (time)step
-        null_obv = prime_obv if info['lives'] > 0 else env.reset()
-        # null_obv = prime_obv
+        # null_obv = prime_obv if info['lives'] > 0 else env.reset()
+        if info['lives'] == 0: break
+        null_obv = prime_obv
         
     # manage score
     score_history.append(score)
