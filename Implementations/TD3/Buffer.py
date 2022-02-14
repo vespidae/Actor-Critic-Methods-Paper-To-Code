@@ -37,3 +37,14 @@ class ReplayBuffer():
             self.memory[mem][index] = value
 
         self.mem_cntr += 1
+
+    def sample_replay(self, batch_size):
+        picks = {}
+
+        max_mem = min(self.mem_cntr, self.mem_size)
+        batch = np.random.choice(max_mem, batch_size)
+
+        for mem in ["null_state", "prime_state", "action", "reward", "terminal"]:
+            picks[mem] = self.memory[mem][batch]
+
+        return picks["null_state"], picks["prime_state"], picks["action"], picks["reward"], picks["terminal"]
