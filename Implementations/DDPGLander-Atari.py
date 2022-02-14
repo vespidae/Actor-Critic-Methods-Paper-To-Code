@@ -19,8 +19,7 @@ class OUActionNoise():
     # allows us to use the name of an object as a function
     def __call__(self):
         # get temporal correlation of noise
-        x = self.xPrevious + self.theta * (self.mu - self.xPrevious) * self.dt + self.sigma * np.sqrt(
-            self.dt) + np.random.normal(size=self.mu.shape)
+        x = self.xPrevious + self.theta * (self.mu - self.xPrevious) *         self.dt + self.sigma * np.sqrt(self.dt) + np.random.normal(size=self.mu.shape)
         self.xPrevious = x
 
         return x
@@ -39,21 +38,20 @@ class ReplayBuffer():
         self.mem_cntr = 0
 
         self.memory = {
-            "null_state": np.array([np.zeros(input_shape) for reg in range(self.mem_size)]),
-            # np.zeros((self.mem_size, *input_shape)),
-            "action": np.zeros((self.mem_size, action_shape)),
-            "reward": np.zeros(self.mem_size),
-            "prime_state": np.array([np.zeros(input_shape) for reg in range(self.mem_size)]),
-            # np.zeros((self.mem_size, *input_shape)),
-            "terminal": np.zeros(self.mem_size, dtype=bool),
+            "null_state" : np.array([np.zeros(input_shape) for reg in range(self.mem_size)]),# np.zeros((self.mem_size, *input_shape)),
+            "action" : np.zeros((self.mem_size, action_shape)),
+            "reward" : np.zeros(self.mem_size),
+            "prime_state" : np.array([np.zeros(input_shape) for reg in range(self.mem_size)]),#np.zeros((self.mem_size, *input_shape)),
+            "terminal" : np.zeros(self.mem_size, dtype=bool),
         }
 
         # mask for setting critic values for new state to zero
         # self.term_mem = np.zeros(self.mem_size, dtype=np.bool)
 
+
     def store_transition(self, null_state, action, reward, prime_state, done):
         index = self.mem_cntr % self.mem_size
-        alignment = zip(["null_state", "action", "reward", "prime_state"], [null_state, action, reward, prime_state])
+        alignment = zip(["null_state", "action", "reward", "prime_state"],                        [null_state, action, reward, prime_state])
 
         for mem, value in alignment:
             # print("mem: {}\tself.mem_cntr: {}\tvalue.shape: {}\tself.memory[mem][self.mem_cntr].shape: {}".format(\
@@ -64,10 +62,10 @@ class ReplayBuffer():
 
         self.mem_cntr += 1
 
-    #     def sample_replay(self, proportion):
+#     def sample_replay(self, proportion):
 
-    #         sample_size = np.ceil(len(self.replays) * proportion)
-    #         return np.random.choice(self.replays, sample_size)
+#         sample_size = np.ceil(len(self.replays) * proportion)
+#         return np.random.choice(self.replays, sample_size)
 
     def sample_replay(self, batch_size):
         picks = {}
@@ -98,14 +96,14 @@ class CriticNetwork(nn.Module):
     def __init__(self, beta, input_dims, n_actions, hl_one, hl_two, chkpt_name, chkpt_dir='tmp/ddpg'):
         super(CriticNetwork, self).__init__()
 
-        self.beta, self.input_dims, self.hl_one, self.hl_two, self.n_actions, self.chkpt_name, self.chkpt_dir = beta, input_dims, hl_one, hl_two, n_actions, chkpt_name, chkpt_dir
+        self.beta, self.input_dims, self.hl_one, self.hl_two, self.n_actions, self.chkpt_name, self.chkpt_dir =         beta, input_dims, hl_one, hl_two, n_actions, chkpt_name, chkpt_dir
 
         self.chkpt_file = os.path.join(self.chkpt_dir, self.chkpt_name + '_ddpg')
 
         # define layers
         # self.frame = nn.Conv2d(3,1,3)
         self.flatten = nn.Flatten()
-        self.input = nn.Linear(np.prod(self.input_dims), self.hl_one)
+        self.input = nn.Linear(np.prod(self.input_dims),self.hl_one)
         self.hidden = nn.Linear(self.hl_one, self.hl_two)
 
         # define normalizers
@@ -186,14 +184,14 @@ class ActorNetwork(nn.Module):
     def __init__(self, alpha, input_dims, n_actions, hl_one, hl_two, chkpt_name, chkpt_dir='tmp/ddpg'):
         super(ActorNetwork, self).__init__()
 
-        self.alpha, self.input_dims, self.hl_one, self.hl_two, self.n_actions, self.chkpt_name, self.chkpt_dir = alpha, input_dims, hl_one, hl_two, n_actions, chkpt_name, chkpt_dir
+        self.alpha, self.input_dims, self.hl_one, self.hl_two, self.n_actions, self.chkpt_name, self.chkpt_dir =         alpha, input_dims, hl_one, hl_two, n_actions, chkpt_name, chkpt_dir
 
         self.chkpt_file = os.path.join(self.chkpt_dir, self.chkpt_name + '_ddpg')
 
         # define layers
         # self.frame = nn.Conv2d(3,1,3)
         self.flatten = nn.Flatten()
-        self.input = nn.Linear(np.prod(self.input_dims), self.hl_one)
+        self.input = nn.Linear(np.prod(self.input_dims),self.hl_one)
         self.hidden = nn.Linear(self.hl_one, self.hl_two)
         # self.output = nn.Linear(self.hl_two, self.n_actions)
 
@@ -207,15 +205,15 @@ class ActorNetwork(nn.Module):
         # initialize layers
         for layer in [self.input, self.hidden]:
             fan_in = 1 / np.sqrt(layer.weight.data.size()[0])
-            layer.weight.data.uniform_(-fan_in, fan_in)
-            layer.bias.data.uniform_(-fan_in, fan_in)
+            layer.weight.data.uniform_(-fan_in,fan_in)
+            layer.bias.data.uniform_(-fan_in,fan_in)
 
         mu_fan_in = 3e-3
         self.mu.weight.data.uniform_(-mu_fan_in, mu_fan_in)
         self.mu.bias.data.uniform_(-mu_fan_in, mu_fan_in)
 
         # define optimizer
-        self.optimizer = optim.Adam(self.parameters(), lr=self.alpha)  # , weight_decay=1e-4)
+        self.optimizer = optim.Adam(self.parameters(), lr=self.alpha)#, weight_decay=1e-4)
 
         # device
         self.device = [torch.device('cpu')]
@@ -263,18 +261,15 @@ class ActorNetwork(nn.Module):
 
 
 class Agent():
-    def __init__(self, alpha, beta, tau, input_dims, n_actions, gamma=0.99, hlOne=400, hlTwo=300, buffer_size=1e6,
-                 batch_size=64):
-        self.alpha, self.beta, self.gamma, self.tau, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, self.buffer_size, self.batch_size = alpha, beta, gamma, tau, input_dims, n_actions, hlOne, hlTwo, buffer_size, batch_size
+    def __init__(self, alpha, beta, tau, input_dims, n_actions, gamma=0.99, hlOne=400, hlTwo=300, buffer_size=1e6, batch_size=64):
+        self.alpha, self.beta, self.gamma, self.tau, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, self.buffer_size, self.batch_size =         alpha, beta, gamma, tau, input_dims, n_actions, hlOne, hlTwo, buffer_size, batch_size
         # for argument,name in zip([self.alpha, self.beta, self.gamma, self.tau, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, self.buffer_size, self.batch_size],["alpha", "beta", "gamma", "tau", "input_dims", "n_actions", "hlOne", "hlTwo", "buffer_size", "batch_size"]):
         #     print("Argument: {}\tName: {}".format(name, argument))
 
         self.actor = ActorNetwork(self.alpha, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'actor')
         self.critic = CriticNetwork(self.beta, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'critic')
-        self.actor_prime = ActorNetwork(self.alpha, self.input_dims, self.n_actions, self.hlOne, self.hlTwo,
-                                        'target_actor')
-        self.critic_prime = CriticNetwork(self.beta, self.input_dims, self.n_actions, self.hlOne, self.hlTwo,
-                                          'target_critic')
+        self.actor_prime = ActorNetwork(self.alpha, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'target_actor')
+        self.critic_prime = CriticNetwork(self.beta, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'target_critic')
 
         self.buffer = ReplayBuffer(self.buffer_size, self.input_dims, self.n_actions)
         self.noise = OUActionNoise(mu=np.zeros(n_actions))
@@ -290,12 +285,12 @@ class Agent():
         mu_prime = mu + self.actor.route_data(torch.Tensor(self.noise()))
         self.actor.train()
 
-        #         # get action from policy
-        #         mu = F.softmax(mu, dim=1)
-        #         action_probs = torch.distributions.Categorical(mu)
-        #         a = action_probs.sample()
+#         # get action from policy
+#         mu = F.softmax(mu, dim=1)
+#         action_probs = torch.distributions.Categorical(mu)
+#         a = action_probs.sample()
 
-        #         self.log_prob = action_probs.log_prob(a)
+#         self.log_prob = action_probs.log_prob(a)
 
         return mu_prime.cpu().detach().numpy()[0]
 
@@ -365,14 +360,12 @@ class Agent():
         # theta_mu_prime = {name:param for name,param in self.actor_prime.named_parameters()}
         # theta_Q_prime = {name:param for name,param in self.critic_prime.named_parameters()}
 
-        for target_network, null_network in [[theta_mu_prime, theta_mu], [theta_Q_prime, theta_Q]]:
+        for target_network, null_network in [[theta_mu_prime,theta_mu],[theta_Q_prime,theta_Q]]:
             for param in null_network.keys():
-                target_network[param] = (tau * null_network[param].clone()) + (
-                        (1 - tau) * target_network[param].clone())
+                target_network[param] = (tau * null_network[param].clone()) +                 ((1 - tau) * target_network[param].clone())
 
         self.actor_prime.load_state_dict(theta_mu_prime)
         self.critic_prime.load_state_dict(theta_Q_prime)
-
 
 #         L = (1 / batch_size) * ((y - Q) ** 2)
 #         # target_actor_loss = -self.log_prob*delta
@@ -392,7 +385,7 @@ def plot_learning_curve(scores, x, figure_file):
     running_avg = np.zeros(len(scores))
 
     for i in range(len(running_avg)):
-        running_avg[i] = np.mean(scores[max(0, i - 100):(i + 1)])
+        running_avg[i] = np.mean(scores[max(0, i-100):(i+1)])
     plt.plot(x, running_avg)
     plt.title("Running Average of Previous 100 Scores")
     plt.savefig(figure_file)
@@ -403,11 +396,12 @@ def plot_learning_curve(scores, x, figure_file):
 
 import gym
 
+
 # In[ ]:
 
 
 n_games = 5000
-actor_lr = 1e-4
+actor_lr =1e-4
 critic_lr = 1e-3
 soft_target_update = 1e-3
 # input_dimensions = [210, 160, 3]
@@ -426,19 +420,16 @@ minibatch_size = 64
 # env = gym.make('ALE/Asteroids-v5')
 # env = gym.make('ALE/ChopperCommand-v5') # <- good vizualizations
 # env = gym.make('ALE/Alien-v5') # <- good vizualizations
-env = gym.make('ALE/BattleZone-v5')  # <- good vizualizations
+env = gym.make('ALE/BattleZone-v5') # <- good vizualizations
 # print(env.observation_space.shape[0])
 action_space_is_box = type(env.action_space) is gym.spaces.box.Box
 number_of_actions = env.action_space.shape[0] if action_space_is_box else env.action_space.n
 # print(type(env.action_space))
-agent = Agent(actor_lr, critic_lr, soft_target_update, env.observation_space.shape, number_of_actions, discount_factor,
-              hlOne, hlTwo, int(buffer_size), minibatch_size)
-# alpha, beta, tau, input_dims, n_actions, gamma=0.99, hlOne=400, hlTwo=300, buffer_size=1e6, batch_size=64
+agent = Agent(actor_lr, critic_lr, soft_target_update, env.observation_space.shape,               number_of_actions, discount_factor,               hlOne, hlTwo, int(buffer_size), minibatch_size)
+            # alpha, beta, tau, input_dims, n_actions, gamma=0.99, hlOne=400, hlTwo=300, buffer_size=1e6, batch_size=64
 # print(agent.actor.n_actions)
 
-figure_name = 'ACTOR_CRITIC-' + 'lunar_lander-%s' % str(agent.hlOne) + 'x%s' % str(agent.hlTwo) + '-alpha_%s' % str(
-    agent.alpha) + '-beta_%s' % str(agent.beta) + '-tau_%s' % str(agent.tau) + '-buffer_%s' % str(
-    agent.buffer_size) + '-batch_size_%s' % str(agent.batch_size) + '-' + str(n_games) + '_games'
+figure_name = 'ACTOR_CRITIC-' + 'lunar_lander-%s' % str(agent.hlOne) + 'x%s' % str(agent.hlTwo) +     '-alpha_%s' % str(agent.alpha)  + '-beta_%s' % str(agent.beta)  +     '-tau_%s' % str(agent.tau) + '-buffer_%s' % str(agent.buffer_size)  +     '-batch_size_%s' % str(agent.batch_size)  + '-' +     str(n_games) + '_games'
 figure_file = 'plots/' + figure_name + '.png'
 
 best_score = env.reward_range[0]
@@ -451,11 +442,11 @@ for i in range(n_games):
     score = 0
     done = False
 
-    #     stuck_range = stuck_seconds * 60
-    #     # sticky_situation = [null_obv for i in range(stuck_range)]
-    #     sticky_situation = np.zeros(stuck_range).tolist()
-    #     stick_cnt = 0
-    #     stuck = True
+#     stuck_range = stuck_seconds * 60
+#     # sticky_situation = [null_obv for i in range(stuck_range)]
+#     sticky_situation = np.zeros(stuck_range).tolist()
+#     stick_cnt = 0
+#     stuck = True
 
     while not done:
         # # get unstuck if necessary
@@ -494,7 +485,12 @@ for i in range(n_games):
 
     print("Episode: {}\t\tScore: {}\t\tAverage Score: {}".format(i, score, running_avg_score))
 
-x = [i + 1 for i in range(len(score_history))]
+x = [i+1 for i in range(len(score_history))]
 plot_learning_curve(score_history, x, figure_file)
 
+
 # In[ ]:
+
+
+
+
