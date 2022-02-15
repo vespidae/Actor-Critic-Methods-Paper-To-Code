@@ -38,7 +38,7 @@ class Agent():
     def choose_action(self, observation):
         state = T.Tensor([observation]).to(self.actor.device)
         actions, _ = self.actor.sample_normal(state, reparameterize=False)
-        #actions, _ = self.actor.sample_mvnormal(state)
+        #actions, _ = self.actor_online.sample_mvnormal(state)
         # actions is an array of arrays due to the added dimension in state
         return actions.cpu().detach().numpy()[0]
 
@@ -63,7 +63,7 @@ class Agent():
         value_[done] = 0.0
        
         actions, log_probs = self.actor.sample_normal(state, reparameterize=False)
-        #actions, log_probs = self.actor.sample_mvnormal(state, reparameterize=False)
+        #actions, log_probs = self.actor_online.sample_mvnormal(state, reparameterize=False)
         log_probs = log_probs.view(-1)
         q1_new_policy = self.critic_1.forward(state, actions)
         q2_new_policy = self.critic_2.forward(state, actions)
@@ -77,7 +77,7 @@ class Agent():
         self.value.optimizer.step()
 
         actions, log_probs = self.actor.sample_normal(state, reparameterize=True)
-        #actions, log_probs = self.actor.sample_mvnormal(state, reparameterize=False)
+        #actions, log_probs = self.actor_online.sample_mvnormal(state, reparameterize=False)
         log_probs = log_probs.view(-1)
         q1_new_policy = self.critic_1.forward(state, actions)
         q2_new_policy = self.critic_2.forward(state, actions)

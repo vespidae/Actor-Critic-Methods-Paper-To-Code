@@ -266,9 +266,9 @@ class Agent():
         # for argument,name in zip([self.alpha, self.beta, self.gamma, self.tau, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, self.buffer_size, self.batch_size],["alpha", "beta", "gamma", "tau", "input_dims", "n_actions", "hlOne", "hlTwo", "buffer_size", "batch_size"]):
         #     print("Argument: {}\tName: {}".format(name, argument))
 
-        self.actor = ActorNetwork(self.alpha, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'actor')
+        self.actor = ActorNetwork(self.alpha, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'actor_online')
         self.critic = CriticNetwork(self.beta, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'critic')
-        self.actor_prime = ActorNetwork(self.alpha, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'target_actor')
+        self.actor_prime = ActorNetwork(self.alpha, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'actor_target')
         self.critic_prime = CriticNetwork(self.beta, self.input_dims, self.n_actions, self.hlOne, self.hlTwo, 'target_critic')
 
         self.buffer = ReplayBuffer(self.buffer_size, self.input_dims, self.n_actions)
@@ -286,7 +286,7 @@ class Agent():
         self.actor.train()
 
 #         # get action from policy
-#         mu = F.softmax(mu, dim=1)
+#         mu = f.softmax(mu, dim=1)
 #         action_probs = torch.distributions.Categorical(mu)
 #         a = action_probs.sample()
 
@@ -355,7 +355,7 @@ class Agent():
         theta_Q = self.critic.state_dict()
         theta_mu_prime = self.actor_prime.state_dict()
         theta_Q_prime = self.critic_prime.state_dict()
-        # theta_mu = {name:param for name,param in self.actor.named_parameters()}
+        # theta_mu = {name:param for name,param in self.actor_online.named_parameters()}
         # theta_Q = {name:param for name,param in self.critic.named_parameters()}
         # theta_mu_prime = {name:param for name,param in self.actor_prime.named_parameters()}
         # theta_Q_prime = {name:param for name,param in self.critic_prime.named_parameters()}
@@ -374,7 +374,7 @@ class Agent():
 #         # (target_actor_loss + target_critic_loss).backward()
 #         L.backward()
 
-#         self.actor.optimizer.step()
+#         self.actor_online.optimizer.step()
 
 
 # In[ ]:
@@ -427,7 +427,7 @@ number_of_actions = env.action_space.shape[0] if action_space_is_box else env.ac
 # print(type(env.action_space))
 agent = Agent(actor_lr, critic_lr, soft_target_update, env.observation_space.shape,               number_of_actions, discount_factor,               hlOne, hlTwo, int(buffer_size), minibatch_size)
             # alpha, beta, tau, input_dims, n_actions, gamma=0.99, hlOne=400, hlTwo=300, buffer_size=1e6, batch_size=64
-# print(agent.actor.n_actions)
+# print(agent.actor_online.n_actions)
 
 figure_name = 'ACTOR_CRITIC-' + 'lunar_lander-%s' % str(agent.hlOne) + 'x%s' % str(agent.hlTwo) +     '-alpha_%s' % str(agent.alpha)  + '-beta_%s' % str(agent.beta)  +     '-tau_%s' % str(agent.tau) + '-buffer_%s' % str(agent.buffer_size)  +     '-batch_size_%s' % str(agent.batch_size)  + '-' +     str(n_games) + '_games'
 figure_file = 'plots/' + figure_name + '.png'

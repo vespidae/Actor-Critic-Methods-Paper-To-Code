@@ -21,12 +21,12 @@ class Agent():
         self.noise = OUActionNoise(mu=np.zeros(n_actions))
 
         self.actor = ActorNetwork(alpha, input_dims, fc1_dims, fc2_dims,
-                                n_actions=n_actions, name='actor')
+                                n_actions=n_actions, name='actor_online')
         self.critic = CriticNetwork(beta, input_dims, fc1_dims, fc2_dims,
                                 n_actions=n_actions, name='critic')
 
         self.target_actor = ActorNetwork(alpha, input_dims, fc1_dims, fc2_dims,
-                                n_actions=n_actions, name='target_actor')
+                                n_actions=n_actions, name='actor_target')
 
         self.target_critic = CriticNetwork(beta, input_dims, fc1_dims, fc2_dims,
                                 n_actions=n_actions, name='target_critic')
@@ -119,7 +119,7 @@ class Agent():
         self.target_critic.load_state_dict(critic_state_dict)
         self.target_actor.load_state_dict(actor_state_dict)
         #self.target_critic.load_state_dict(critic_state_dict, strict=False)
-        #self.target_actor.load_state_dict(actor_state_dict, strict=False)
+        #self.actor_target.load_state_dict(actor_state_dict, strict=False)
 
 
 

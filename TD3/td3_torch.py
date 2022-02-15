@@ -24,7 +24,7 @@ class Agent():
 
         self.actor = ActorNetwork(alpha, input_dims, layer1_size,
                                   layer2_size, n_actions=n_actions,
-                                  name='actor')
+                                  name='actor_online')
         self.critic_1 = CriticNetwork(beta, input_dims, layer1_size,
                                       layer2_size, n_actions=n_actions,
                                       name='critic_1')
@@ -34,7 +34,7 @@ class Agent():
 
         self.target_actor = ActorNetwork(alpha, input_dims, layer1_size,
                                          layer2_size, n_actions=n_actions,
-                                         name='target_actor')
+                                         name='actor_target')
         self.target_critic_1 = CriticNetwork(beta, input_dims, layer1_size,
                                          layer2_size, n_actions=n_actions,
                                          name='target_critic_1')

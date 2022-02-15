@@ -57,11 +57,11 @@ class CriticNetwork(nn.Module):
         state_value = F.relu(state_value)
         state_value = self.fc2(state_value)
         state_value = self.bn2(state_value)
-        #state_value = F.relu(state_value)
-        #action_value = F.relu(self.action_value(action))
+        #state_value = f.relu(state_value)
+        #action_value = f.relu(self.action_value(action))
         action_value = self.action_value(action)
         state_action_value = F.relu(T.add(state_value, action_value))
-        #state_action_value = T.add(state_value, action_value)
+        #state_action_value = t.add(state_value, action_value)
         state_action_value = self.q(state_action_value)
 
         return state_action_value

@@ -48,7 +48,7 @@ class PolicyGradientAgent():
         self.policy.optimizer.zero_grad()
 
         # G_t = R_t+1 + gamma * R_t+2 + gamma**2 * R_t+3
-        # G_t = sum from k=0 to k=T {gamma**k * R_t+k+1}
+        # G_t = sum from k=0 to k=t {gamma**k * R_t+k+1}
         G = np.zeros_like(self.reward_memory, dtype=np.float64)
         for t in range(len(self.reward_memory)):
             G_sum = 0

@@ -62,7 +62,7 @@ class CriticNetwork(nn.Module):
 # In[5]:
 
 
-# actor network
+# actor_online network
 class ActorNetwork(nn.Module):
     def __init__(self, alpha, input_dims, fc1_dims, fc2_dims, n_actions, chkpt_name, chkpt_dir='tmp/td3'):
         super(ActorNetwork, self).__init__()
@@ -96,11 +96,11 @@ class ActorNetwork(nn.Module):
         return a
     
     def save_checkpoint(self):
-        print("Saving actor checkpoint...")
+        print("Saving actor_online checkpoint...")
         T.save(self.state_dict(), self.checkpoint_file)
         print("Actor checkpoint saved!")
     
     def load_checkpoint(self):
-        print("Loading actor checkpoint...")
+        print("Loading actor_online checkpoint...")
         self.load_state_dict(T.load(self.checkpoint_file))
         print("Actor checkpoint loaded!")

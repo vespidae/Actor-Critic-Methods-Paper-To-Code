@@ -75,7 +75,7 @@ class ActorNetwork(nn.Module):
         prob = F.relu(prob)
 
         mu = self.mu(prob)
-        #sigma = T.sigmoid(self.sigma(prob))
+        #sigma = t.sigmoid(self.sigma(prob))
         sigma = self.sigma(prob)
         sigma = T.clamp(sigma, min=self.reparam_noise, max=1) 
         # authors use -20, 2 -> doesn't seem to work for my implementation
