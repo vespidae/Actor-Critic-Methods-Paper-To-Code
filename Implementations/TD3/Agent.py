@@ -129,6 +129,28 @@ class Agent():
 
         self.update_network_parameters()
 
-    def update_network_parameters(self):
-        pass
-        
+    def update_network_parameters(self, tau=None):
+        if tau is None:
+            tau = self.tau
+
+        phi_null = self.actor.state_dict()
+        phi_prime = self.target_actor.state_dict()
+        for param in phi_null.keys():
+            phi_prime[param] = tau * phi_null[param].clone() + \
+                                    (1 - tau) * phi_prime[param].clone()
+        self.target_actor.load_state_dict(phi_prime)
+
+        theta_null_one = self.critic_one.state_dict()
+        theta_prime_one = self.target_critic_one.state_dict()
+        for param in theta_null_one.keys():
+            theta_prime_one[param] = tau * theta_null_one[param].clone() + \
+                                     (1 - tau) * theta_prime_one
+        self.target_critic_one.load_state_dict(theta_prime_one)
+
+        theta_null_two = self.critic_one.state_dict()
+        theta_prime_two = self.target_critic_one.state_dict()
+        for param in theta_null_two.keys():
+            theta_prime_two[param] = tau * theta_null_two[param].clone() + \
+                                     (1 - tau) * theta_prime_two
+        self.target_critic_two.load_state_dict(theta_prime_two)
+
