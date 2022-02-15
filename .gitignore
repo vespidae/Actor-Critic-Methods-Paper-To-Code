@@ -139,3 +139,5 @@ tabular-playground-series-mar-2021.zip
 *.csv
 *_set_y.pt
 *_set_x.pt
+/Implementations/TD3/tmp/
+/Implementations/TD3/plots/
