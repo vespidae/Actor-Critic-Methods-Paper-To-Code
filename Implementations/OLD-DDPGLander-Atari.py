@@ -224,7 +224,7 @@ class ActorNetwork(nn.Module):
         x = F.relu(self.lnormi(self.input(state)))
         x = F.relu(self.lnormh(self.hidden(x)))
         A = torch.tanh(self.mu(x))
-        # action_value = self.mu(x)
+        # action_value = self.mu(time)
         
         return A
     
@@ -416,7 +416,7 @@ agent = Agent(actor_lr, critic_lr, soft_target_update, input_dimensions,        
             # alpha, beta, tau, input_dims, n_actions, gamma=0.99, hlOne=400, hlTwo=300, buffer_size=1e6, batch_size=64
 # print(agent.actor_online.n_actions)
 
-figure_name = 'ACTOR_CRITIC-' + 'lunar_lander-%s' % str(agent.hlOne) + 'x%s' % str(agent.hlTwo) +     '-alpha_%s' % str(agent.alpha)  + '-beta_%s' % str(agent.beta)  +     '-tau_%s' % str(agent.tau) + '-buffer_%s' % str(agent.buffer_size)  +     '-batch_size_%s' % str(agent.batch_size)  + '-' +     str(n_games) + '_games'
+figure_name = 'ACTOR_CRITIC-' + 'lunar_lander-%s' % str(agent.hlOne) + 'time%s' % str(agent.hlTwo) +     '-alpha_%s' % str(agent.alpha)  + '-beta_%s' % str(agent.beta)  +     '-tau_%s' % str(agent.tau) + '-buffer_%s' % str(agent.buffer_size)  +     '-batch_size_%s' % str(agent.batch_size)  + '-' +     str(n_games) + '_games'
 figure_file = 'plots/' + figure_name + '.png'
 
 best_score = env.reward_range[0]

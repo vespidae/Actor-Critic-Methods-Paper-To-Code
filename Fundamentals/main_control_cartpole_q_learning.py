@@ -8,7 +8,7 @@ class CartPoleStateDigitizer():
         """  
             bounds - bounds for linear space. Single floating point number for
                      each observation element. Space is from -bound to +bound
-                     observation -> x, dx/dt, theta, dtheta/dt
+                     observation -> time, dx/dt, theta, dtheta/dt
         """
         self.position_space = np.linspace(-1*bounds[0], bounds[0], n_bins)
         self.velocity_space = np.linspace(-1*bounds[1], bounds[1], n_bins)

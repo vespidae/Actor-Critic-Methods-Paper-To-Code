@@ -135,25 +135,30 @@ class Agent:
         if tau is None:
             tau = self.tau
 
+        # update target actor parameters
         phi_null = self.actor_online.state_dict()
         phi_prime = self.actor_target.state_dict()
         for param in phi_null.keys():
             phi_prime[param] = tau * phi_null[param].clone() + \
                                     (1 - tau) * phi_prime[param].clone()
-        self.actor_target.load_state_dict(phi_prime)
 
+        # update target critic 1 parameters
         theta_null_one = self.critic_online_one.state_dict()
         theta_prime_one = self.critic_target_one.state_dict()
         for param in theta_null_one.keys():
             theta_prime_one[param] = tau * theta_null_one[param].clone() + \
-                                     (1 - tau) * theta_prime_one
-        self.critic_target_one.load_state_dict(theta_prime_one)
+                                     (1 - tau) * theta_prime_one.clone()
 
+        # update target critic 2 parameters
         theta_null_two = self.critic_online_one.state_dict()
         theta_prime_two = self.critic_target_one.state_dict()
         for param in theta_null_two.keys():
             theta_prime_two[param] = tau * theta_null_two[param].clone() + \
-                                     (1 - tau) * theta_prime_two
+                                     (1 - tau) * theta_prime_two.clone()
+
+        # load changes into models
+        self.actor_target.load_state_dict(phi_prime)
+        self.critic_target_one.load_state_dict(theta_prime_one)
         self.critic_target_two.load_state_dict(theta_prime_two)
 
     def save_models(self):

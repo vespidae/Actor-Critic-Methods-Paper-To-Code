@@ -133,7 +133,7 @@ gamma = 0.99
 env = gym.make('LunarLander-v2')
 agent = Agent(lr, gamma, [8], 4, 2048, 1536)
 
-figure_name = 'ACTOR_CRITIC-' + 'lunar_lander-%s' % str(agent.hlOne) + 'x%s' % str(agent.hlTwo) +     '-lr_%s' % str(agent.lr)  + '-' + str(n_games) + '_games'
+figure_name = 'ACTOR_CRITIC-' + 'lunar_lander-%s' % str(agent.hlOne) + 'time%s' % str(agent.hlTwo) +     '-lr_%s' % str(agent.lr)  + '-' + str(n_games) + '_games'
 figure_file = 'plots/' + figure_name + '.png'
 
 scores = []

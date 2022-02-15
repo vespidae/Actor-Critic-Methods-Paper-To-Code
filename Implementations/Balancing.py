@@ -112,11 +112,11 @@ class CartPoleStateDigitizer():
         return states
     
     def digitize(self, observation):
-        # x position, x velocity, angle, angle velocity
+        # time position, time velocity, angle, angle velocity
         bound_names = ["position","velocity","pole_angle_space","pole_velocity"]
         zipped_states = zip(bound_names,[o for o in observation])
 #         print(zipped_states)
-#         x, x_dot, theta, theta_dot = observation
+#         time, x_dot, theta, theta_dot = observation
         cart = {b: int(np.digitize(o, self.state_subspaces[b])) for b,o in zipped_states}
 #         print(tuple(cart.values()))
     

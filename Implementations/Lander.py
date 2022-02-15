@@ -189,6 +189,6 @@ for i in range(n_games):
     avg_score = np.mean(scores[-100:])
     print("Episode: {}\tScore: {}\t\tAverage Score: {}".format(i,score,avg_score))
     
-# x = [i+1 for i in range(len(scores))]
-# plot_learning_curve(scores, x, figure_file)
+# time = [i+1 for i in range(len(scores))]
+# plot_learning_curve(scores, time, fig_file)
 
