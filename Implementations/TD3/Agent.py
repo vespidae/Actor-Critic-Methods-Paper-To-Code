@@ -63,7 +63,7 @@ class Agent:
             state = t.tensor(observation, dtype=t.float).to(self.actor_online.device)
             mu = self.actor_online.forward(state).to(self.actor_online.device)
         else:
-            mu = t.tensor(np.random.normal(scale=self.noise, size=(self.n_actions,)))
+            mu = t.tensor(np.random.normal(scale=self.noise, size=(self.n_actions,))).to(self.actor_online.device)
 
         # exploratory noise
         mu_prime = mu + t.tensor(np.random.normal(scale=self.noise),
@@ -147,14 +147,14 @@ class Agent:
         theta_prime_one = self.critic_target_one.state_dict()
         for param in theta_null_one.keys():
             theta_prime_one[param] = tau * theta_null_one[param].clone() + \
-                                     (1 - tau) * theta_prime_one.clone()
+                                     (1 - tau) * theta_prime_one[param].clone()
 
         # update target critic 2 parameters
         theta_null_two = self.critic_online_one.state_dict()
         theta_prime_two = self.critic_target_one.state_dict()
         for param in theta_null_two.keys():
             theta_prime_two[param] = tau * theta_null_two[param].clone() + \
-                                     (1 - tau) * theta_prime_two.clone()
+                                     (1 - tau) * theta_prime_two[param].clone()
 
         # load changes into models
         self.actor_target.load_state_dict(phi_prime)

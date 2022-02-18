@@ -17,16 +17,16 @@ import numpy as np
 
 # memory
 class ReplayBuffer():
-    def __init__(self, max_size, input_shape, action_shape):
+    def __init__(self, max_size, input_shape, n_actions):
         self.mem_size = max_size
         self.mem_cntr = 0
 
         self.memory = {
-            "null_state" : np.array([np.zeros(input_shape) for reg in range(self.mem_size)]),
-            "action" : np.zeros((self.mem_size, action_shape)),
-            "reward" : np.zeros((self.mem_size)),
-            "prime_state" : np.array([np.zeros((input_shape)) for reg in range(self.mem_size)]),
-            "terminal" : np.zeros(self.mem_size, dtype=bool)
+            "null_state" : np.zeros((self.mem_size, *input_shape)),
+            "action" : np.zeros((self.mem_size, n_actions)),
+            "reward" : np.zeros(self.mem_size),
+            "prime_state" : np.zeros((self.mem_size, *input_shape)),
+            "terminal" : np.zeros(self.mem_size, dtype=np.bool)
         }
 
     def store_transition(self, null_state, action, reward, prime_state, done):
@@ -47,4 +47,4 @@ class ReplayBuffer():
         for mem in ["null_state", "prime_state", "action", "reward", "terminal"]:
             picks[mem] = self.memory[mem][batch]
 
-        return picks["null_state"], picks["prime_state"], picks["action"], picks["reward"], picks["terminal"]
+        return picks["null_state"], picks["action"], picks["reward"], picks["prime_state"], picks["terminal"]

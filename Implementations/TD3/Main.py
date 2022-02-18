@@ -12,7 +12,7 @@ if __name__ == '__main__':
     discount_factor = 0.99
     hlOne = 400
     hlTwo = 300
-    buffer_size = 3e4
+    buffer_size = int(3e4)
     minibatch_size = 64
 
     env = gym.make('BipedalWalker-v3')
@@ -27,7 +27,7 @@ if __name__ == '__main__':
     filename = 'Biped-2D_' + str(n_games) + '.png'
     figure_file = 'plots/' + filename
 
-    best_score = env.reward.range[0]
+    best_score = env.reward_range[0]
     score_history = []
 
     for i in range(n_games):
@@ -40,7 +40,7 @@ if __name__ == '__main__':
             # action = choice.argmax(0)
             action = agent.choose_action(null_obv)
             prime_obv, reward, done, info = env.step(action)
-            env.render()
+            # env.render()
             agent.remember(null_obv, action, reward, prime_obv, done)
             score += reward
             agent.learn()
