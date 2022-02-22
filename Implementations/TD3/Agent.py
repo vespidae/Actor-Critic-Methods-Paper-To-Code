@@ -37,7 +37,9 @@ class Agent:
         self.max_size = max_size
         self.noise = noise
         self.max_action = env.action_space.high
+        # self.max_action = env.action_space - 1
         self.min_action = env.action_space.low
+        # self.min_action = 0
         self.learn_step_cntr = 0
         self.time_step = 0  # countdown to end of warmup period
         self.warmup = warmup

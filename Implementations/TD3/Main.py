@@ -5,7 +5,7 @@ from Agent import Agent
 
 
 if __name__ == '__main__':
-    n_games = 1500
+    n_games = 7500
     actor_lr = 1e-3
     critic_lr = 1e-3
     soft_target_update = 5e-3
@@ -14,11 +14,24 @@ if __name__ == '__main__':
     hlTwo = 300
     buffer_size = int(3e4)
     minibatch_size = 64
+    # n_games = 5000
+    # actor_lr = 1e-4
+    # critic_lr = 1e-3
+    # soft_target_update = 1e-3
+    # # input_dimensions = [210, 160, 3]
+    # # number_of_actions = 4
+    # discount_factor = 0.99
+    # hlOne = 400
+    # hlTwo = 300
+    # buffer_size = int(3e4)
+    # minibatch_size = 64
 
     env = gym.make('BipedalWalker-v3')
+    # env = gym.make('ALE/BattleZone-v5')
 
     input_space = env.observation_space.shape
     action_space = env.action_space.shape[0]
+    # action_space = env.action_space.n
 
     agent = Agent(alpha=actor_lr, beta=critic_lr, input_dims=input_space, n_actions=action_space, env=env,
                   tau=soft_target_update, layer1_size=hlOne, layer2_size=hlTwo, buffer_size=buffer_size,
@@ -40,7 +53,7 @@ if __name__ == '__main__':
             # action = choice.argmax(0)
             action = agent.choose_action(null_obv)
             prime_obv, reward, done, info = env.step(action)
-            # env.render()
+            env.render()
             agent.remember(null_obv, action, reward, prime_obv, done)
             score += reward
             agent.learn()
